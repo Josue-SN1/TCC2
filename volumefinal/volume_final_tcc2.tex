@@ -1,0 +1,1117 @@
+\documentclass[12pt,a4paper]{article}
+
+% Pacotes essenciais
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english,brazilian]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+
+% Configuração de hiperlinks discretos (sem caixas coloridas)
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=black
+}
+
+% Configuração das margens (Padrão ABNT/PUCRS)
+\geometry{a4paper, left=3cm, top=3cm, right=2cm, bottom=2cm}
+
+% Pacote de citações padrão ABNT
+\usepackage[alf]{abntex2cite}
+\DeclareRobustCommand{\sigla}[1]{%
+    \texorpdfstring{\hyperlink{sigla:#1}{#1}}{#1}%
+}
+
+\begin{document}
+
+% ==========================================
+% CAPA
+% ==========================================
+\begin{titlepage}
+    \begin{center}
+        \singlespacing
+        \textbf{PONTIFÍCIA UNIVERSIDADE CATÓLICA DO RIO GRANDE DO SUL}\\
+        \textbf{ESCOLA POLITÉCNICA}\\
+        \textbf{BACHARELADO EM CIÊNCIA DA COMPUTAÇÃO}
+
+        \vspace{4cm}
+
+        \textbf{JOSUÉ NASCIMENTO}
+
+        \vfill
+
+        \textbf{PREDIÇÃO DE UM PROXY DE RISCO DE CETOACIDOSE DIABÉTICA (DKA) EM PESSOAS COM DIABETES TIPO 1 UTILIZANDO DADOS MULTIMODAIS E APRENDIZADO DE MÁQUINA}
+
+        \vfill
+
+        \textbf{Porto Alegre}\\
+        \textbf{2026}
+    \end{center}
+\end{titlepage}
+
+\newpage
+
+% ==========================================
+% FOLHA DE ROSTO
+% ==========================================
+\begin{titlepage}
+    \begin{center}
+        \singlespacing
+        \textbf{PONTIFÍCIA UNIVERSIDADE CATÓLICA DO RIO GRANDE DO SUL}\\
+        \textbf{ESCOLA POLITÉCNICA}\\
+        \textbf{BACHARELADO EM CIÊNCIA DA COMPUTAÇÃO}
+
+        \vspace{4cm}
+
+        \textbf{JOSUÉ NASCIMENTO}
+
+        \vspace{4cm}
+
+        \textbf{PREDIÇÃO DE UM PROXY DE RISCO DE CETOACIDOSE DIABÉTICA (DKA) EM PESSOAS COM DIABETES TIPO 1 UTILIZANDO DADOS MULTIMODAIS E APRENDIZADO DE MÁQUINA}
+
+        \vspace{3cm}
+
+        \begin{flushright}
+            \begin{minipage}{8cm}
+                \singlespacing
+                Trabalho de Conclusão apresentado como requisito parcial à obtenção do grau de Bacharel em Ciência da Computação na Pontifícia Universidade Católica do Rio Grande do Sul.
+                \\
+                \\
+                Orientador(a): Profª. Dra. Denise Bandeira da Silva
+            \end{minipage}
+        \end{flushright}
+
+        \vfill
+
+        \textbf{Porto Alegre}\\
+        \textbf{2026}
+    \end{center}
+\end{titlepage}
+
+% ==========================================
+% RESUMO
+% ==========================================
+\newpage
+
+\begin{abstract}
+
+\vspace{1cm}
+\singlespacing
+Este trabalho apresenta o desenvolvimento e a avaliação de modelos preditivos baseados em aprendizado de máquina para antecipar o nível de um proxy de risco de cetoacidose diabética (\sigla{DKA}) em pacientes com Diabetes Mellitus Tipo 1 (\sigla{DM1}). Utilizando dados históricos de monitoramento contínuo de glicose (\sigla{CGM}) provenientes da base pública \sigla{T1D-UOM} e variáveis contextuais, o estudo formula uma heurística de escore de risco ordinal baseada em limiares clínicos de hiperglicemia. Além disso, discute-se a inclusão conceitual de um diário digital para o autorrelato de sintomas comportamentais, como a poliúria. Os resultados são interpretados como avaliação exploratória de um proxy metabólico, sem representar diagnóstico clínico de \sigla{DKA}.
+
+\vspace{0.5cm}
+
+\noindent \textbf{Palavras-chave:} Cetoacidose Diabética. Diabetes Tipo 1. Aprendizado de Máquina. Monitoramento Contínuo de Glicose. Diário Digital.
+\end{abstract}
+
+% ==========================================
+% ABSTRACT
+% ==========================================
+\newpage
+
+\renewcommand{\abstractname}{Abstract}
+\begin{abstract}
+
+
+\vspace{1cm}
+\singlespacing
+This work presents the development and evaluation of machine-learning models to anticipate an ordinal metabolic-risk proxy for diabetic ketoacidosis (\sigla{DKA}) in people with Type 1 Diabetes Mellitus (\sigla{T1D}). Using historical continuous glucose monitoring (\sigla{CGM}) data from the public \sigla{T1D-UOM} dataset and contextual variables, the study formulates a risk-score heuristic based on clinical hyperglycemia thresholds. It additionally discusses the conceptual inclusion of a digital diary for self-reporting behavioral symptoms such as polyuria. The results are interpreted as an exploratory evaluation of a metabolic proxy and do not represent a clinical \sigla{DKA} diagnosis.
+
+\vspace{0.5cm}
+\noindent \textbf{Keywords:} Diabetic Ketoacidosis. Type 1 Diabetes. Machine Learning. Continuous Glucose Monitoring. Digital Diary.
+
+\end{abstract}
+
+
+% ==================== % SUMÁRIO (GERADO AUTOMATICAMENTE) % =================
+\clearpage
+
+\pdfbookmark{\contentsname}{toc}
+\tableofcontents
+
+% ==========================================
+% LISTA DE ABREVIATURAS E SIGLAS
+% ==========================================
+\clearpage
+\begin{samepage}
+    \begin{center}
+        \textbf{\large LISTA DE ABREVIATURAS E SIGLAS}
+    \end{center}
+    \vspace{1cm}
+
+\begin{tabular}{l l}
+    \hypertarget{sigla:CBG}{\textbf{CBG}}  & Glicemia Capilar (\textit{Capillary Blood Glucose}) \\
+    \hypertarget{sigla:CGM}{\textbf{CGM}}  & Monitoramento Contínuo de Glicose (\textit{Continuous Glucose Monitoring}) \\
+    \hypertarget{sigla:DKA}{\textbf{DKA}}  & Cetoacidose Diabética (\textit{Diabetic Ketoacidosis}) \\
+    \hypertarget{sigla:DM1}{\textbf{DM1}}  & Diabetes Mellitus Tipo 1 (\textit{Type 1 Diabetes Mellitus}) \\
+    \hypertarget{sigla:ECG}{\textbf{ECG}}  & Eletrocardiograma \\
+    \hypertarget{sigla:EHR}{\textbf{EHR}}  & Registros Eletrônicos de Saúde (\textit{Electronic Health Records}) \\
+    \hypertarget{sigla:HRV}{\textbf{HRV}}  & Variabilidade da Frequência Cardíaca (\textit{Heart Rate Variability}) \\
+    \hypertarget{sigla:IoT}{\textbf{IoT}}  & Internet das Coisas (\textit{Internet of Things}) \\
+    \hypertarget{sigla:LOPO}{\textbf{LOPO}}  & \textit{Leave-One-Participant-Out} \\
+    \hypertarget{sigla:MAE}{\textbf{MAE}}  & Erro Absoluto Médio (\textit{Mean Absolute Error}) \\
+    \hypertarget{sigla:PPG}{\textbf{PPG}}  & Fotopletismografia (\textit{Photoplethysmography}) \\
+    \hypertarget{sigla:PSG}{\textbf{PSG}}  & Polissonografia (\textit{Polysomnography}) \\
+    \hypertarget{sigla:RF}{\textbf{RF}}  & \textit{Random Forest} \\
+    \hypertarget{sigla:RMSE}{\textbf{RMSE}} & Raiz do Erro Quadrático Médio (\textit{Root Mean Square Error}) \\
+    \hypertarget{sigla:T1D}{\textbf{T1D}}  & Diabetes Tipo 1 (\textit{Type 1 Diabetes}) \\
+    \hypertarget{sigla:T1D-UOM}{\textbf{T1D-UOM}}  & Diabetes Tipo 1 da Universidade de Manchester (\textit{Type 1 Diabetes -- University of Manchester}) \\
+    \hypertarget{sigla:XGB}{\textbf{XGB}}  & \textit{Extreme Gradient Boosting} (XGBoost) \\
+\end{tabular}
+\end{samepage}
+\clearpage
+
+\clearpage
+
+
+% Configuração de espaçamento ABNT para o texto (1.5)
+\onehalfspacing
+\section{Introdução}
+
+O avanço das tecnologias de monitoramento contínuo de glicose (\sigla{CGM}) e dispositivos vestíveis como relógios inteligentes tem permitido a coleta massiva de dados relacionados ao controle glicêmico de pacientes com Diabetes Mellitus Tipo 1 (\sigla{DM1}). Esses dados incluem medições contínuas de glicose, administração de insulina, ingestão de carboidratos, atividade física, padrões de sono e frequência cardíaca, possibilitando assim análises mais profundas do comportamento fisiológico dos pacientes.
+
+Apesar desses avanços, eventos críticos como a cetoacidose diabética (\sigla{DKA}) ainda representam um risco significativo à saúde, podendo levar a hospitalizações e até ao óbito. A cetoacidose é frequentemente causada por falhas no controle glicêmico, sendo caracterizada por hiperglicemia persistente e deficiência de insulina. A detecção precoce dessa descompensação metabólica causadora desse evento ainda é um desafio clínico importante.
+
+Nesse contexto, surge a necessidade de utilizar técnicas computacionais para antecipar esses eventos. A literatura recente aponta que modelos de aprendizado de máquina conseguem identificar padrões complexos em dados clínicos e comportamentais, permitindo prever eventos adversos com boa acurácia \cite{alsamhori2025,cichosz2025}.
+
+\section{Fundamentação Teórica}
+
+No contexto da cetoacidose diabética, estudos recentes demonstram que modelos preditivos podem atingir valores de AUC próximos de 0,8 na identificação de pacientes em risco, indicando um potencial significativo para aplicação clínica preventiva.
+
+Além disso, a literatura aponta que a inclusão de variáveis contextuais, como atividade física, sono e fatores comportamentais, pode melhorar significativamente o desempenho dos modelos, embora esses dados ainda sejam pouco explorados devido à sua limitada disponibilidade.
+
+Modelos de aprendizado de máquina têm sido amplamente utilizados na predição de eventos em diabetes tipo 1, como hipoglicemia, hiperglicemia e cetoacidose. Dados utilizados incluem \sigla{CGM}, insulina, alimentação, atividade física e variáveis clínicas. Modelos como \textit{Random Forest}, XGBoost e LSTM são comumente aplicados \cite{alsamhori2025,cichosz2025}.
+
+\subsection{Diabetes Mellitus Tipo 1 (\sigla{DM1})}
+A diabetes mellitus (DM) é uma doença crônica ocasionada pela produção insuficiente de insulina pelo pâncreas, o que resulta em um estado de hiperglicemia que, ao longo do tempo, causa danos graves aos sistemas humanos, como os nervos e vasos sanguíneos \cite{who2024}. Além disso, essa condição pode ser classificada em diferentes tipos, dos quais incluem pré-diabetes, Diabetes Mellitus Tipo 1 (\sigla{DM1}), Diabetes Mellitus Tipo 2 (DM2) e gestacional, sendo cada uma dessas associadas a diferentes complicações \cite{dacunha2025}.
+
+\subsection{Hemoglobina Glicada (HbA1c)}
+A hemoglobina glicada (HbA1c) serve como medida dos níveis de glicose no sangue nos últimos 2–3 meses e é amplamente considerada o marcador mais confiável para avaliar o controle de longo prazo do diabetes \cite{earnest2025}.
+
+\subsection{Monitoramento Contínuo de Glicose (\sigla{CGM})}
+O \sigla{CGM} é um sistema de monitoramento que realiza aquisição contínua de dados glicêmicos em alta frequência, tipicamente a cada 1–5 minutos. A medição é feita a partir do fluido intersticial produzindo assim uma série temporal multivariada podendo incluir: horário adquirido, valor da glicose (mg/dL) e tendência glicêmica, dependendo do \sigla{CGM} utilizado.
+
+\subsection{Registros Eletrônicos de Saúde (\sigla{EHR})}
+Registros eletrônicos de saúde armazenam informações clínicas estruturadas, como histórico médico, exames laboratoriais e diagnósticos, podendo complementar os dados de sensores e enriquecer modelos preditivos.
+
+\subsection{Cetoacidose Diabética (\sigla{DKA})}
+A cetoacidose diabética (\sigla{DKA} - \textit{Diabetic Ketoacidosis}) representa uma complicação significativa e potencialmente fatal do diabetes, predominantemente observada em indivíduos com diabetes tipo 1 (\sigla{DM1}), embora ocorrências em pessoas com diabetes tipo 2 não sejam incomuns. A \sigla{DKA} surge de um fornecimento inadequado de insulina, levando à desregulação dos níveis de glicose no sangue. Consequentemente, o corpo recorre ao metabolismo da gordura para obter energia, resultando no acúmulo de corpos cetônicos na corrente sanguínea junto com níveis elevados de açúcar no sangue. Essa perturbação metabólica se manifesta em sintomas como náusea, vômito, dor abdominal, confusão, sede excessiva e micção frequente \cite[p. 1,2]{cichosz2025}.
+
+Crianças e adolescentes são particularmente suscetíveis à \sigla{DKA} devido ao seu crescimento e desenvolvimento contínuos, que introduzem complexidades no manejo do diabetes. Fatores como doses de insulina esquecidas, doenças ou infecções podem precipitar rapidamente a \sigla{DKA} nesse grupo demográfico \cite[p. 1,2]{cichosz2025}.
+
+\subsection{Siglas e conceitos utilizados na modelagem}
+O monitoramento contínuo de glicose (\sigla{CGM}, do inglês \textit{Continuous Glucose
+Monitoring}) registra a glicose em série temporal e permite construir
+características agregadas por janela. Nesta pesquisa, a glicose é mantida como
+modalidade principal, enquanto sono e nutrição são avaliados como conjuntos
+adicionais de atributos. A base \sigla{T1D-UOM} também disponibiliza atividade física,
+insulina e outras variáveis contextuais, mas essas modalidades não foram
+incluídas nas comparações principais desta etapa
+\cite{alsuhaymi2025}.
+
+O XGBoost (\textit{Extreme Gradient Boosting}) é um método de \textit{ensemble}
+que constrói árvores de decisão sequencialmente, corrigindo erros dos modelos
+anteriores. O Random Forest (\sigla{RF}) combina árvores treinadas com amostras e
+atributos aleatorizados. Ambos são apropriados para comparar relações não
+lineares em atributos tabulares; a literatura motivou a hipótese inicial de
+vantagem do XGBoost, mas a escolha final deve ser baseada nos resultados
+observados nesta base \cite{alsamhori2025,cichosz2025}.
+
+A validação \sigla{LOPO} (\textit{Leave-One-Participant-Out}) mantém todos os dados de
+um participante fora do treinamento em cada rodada. Assim, ela avalia
+generalização para participantes não observados, diferentemente da divisão
+temporal, que testa períodos futuros de participantes já conhecidos
+\cite{dudukcu2021consolidated}. O erro absoluto médio (\sigla{MAE}, \textit{Mean
+Absolute Error}) mede o erro absoluto médio; a raiz do erro quadrático médio
+(\sigla{RMSE}, \textit{Root Mean Square Error}) penaliza mais fortemente erros grandes;
+e o coeficiente de determinação ($R^2$) compara a variabilidade explicada pelo
+modelo com uma referência baseada na média. Para a classificação secundária, ROC-AUC representa a capacidade de ordenar as
+classes em diferentes limiares.
+
+\subsection{Estimativas de sono e sinais fisiológicos em relógios}
+Os relógios inteligentes não medem diretamente os estágios REM, leve, profundo
+e acordado por meio de um único sensor. Esses estágios são estimados por
+algoritmos que combinam movimento, frequência cardíaca e outros sinais do
+dispositivo. A polissonografia (\sigla{PSG}), que combina atividade cerebral,
+movimentos oculares e tônus muscular, permanece como referência laboratorial
+para estadiamento do sono. Estudos de validação mostram melhor concordância
+dos dispositivos para distinguir sono e vigília do que para distinguir
+estágios específicos, especialmente REM, leve e profundo
+\cite{miller2022wearables}.
+
+A frequência cardíaca dos relógios é usualmente estimada por
+fotopletismografia (\sigla{PPG}), que observa mudanças na quantidade de luz refletida
+ou absorvida pelo tecido conforme o volume sanguíneo varia. Esse método é
+prático para uso contínuo, mas pode sofrer influência de movimento, ajuste do
+relógio, perfusão periférica e características da pele; por isso, não deve ser
+tratado como equivalente a uma medição clínica de pressão arterial ou a um
+eletrocardiograma (\sigla{ECG}). A variabilidade da frequência cardíaca (\sigla{HRV}) descreve
+as variações entre intervalos consecutivos entre batimentos e pode ser
+derivada de \sigla{ECG} ou estimada por sinais de pulso. No presente trabalho, o nível
+de estresse do dispositivo é tratado como uma variável estimada, não como uma
+medição direta de estresse psicológico. Evidências mostram que \sigla{HRV} pode ser
+relacionada a estresse, mas a relação com questionários e estados subjetivos é
+fraca e dependente do contexto \cite{miller2022wearables,velmovitsky2023hrvstress}.
+
+Consequentemente, as variáveis de sono, frequência cardíaca e estresse são
+incluídas como atributos exploratórios. Elas podem contribuir para a previsão
+do proxy glicêmico, mas não autorizam conclusões clínicas independentes sobre
+estágio do sono, pressão arterial ou estresse psicológico.
+
+\subsection{Descrição dos atributos utilizados}
+Os atributos foram definidos a partir das colunas disponíveis na base e das
+transformações realizadas no pré-processamento. A descrição abaixo distingue o
+significado operacional de cada variável da interpretação fisiológica que
+eventualmente poderia ser atribuída a ela.
+
+\begin{itemize}
+    \item \textbf{Glicose (\sigla{CGM}):} concentrações de glicose registradas pelo
+    monitor contínuo, originalmente em mmol/L e convertidas para mg/dL. Em cada
+    janela são calculadas estatísticas como média, desvio-padrão, mínimo e
+    máximo. A glicose também é utilizada para construir o \textit{risk score}
+    da janela seguinte; portanto, ela participa simultaneamente dos atributos
+    e da definição do alvo, mas sempre em janelas temporais distintas.
+    \item \textbf{Passos (\texttt{step\_count}):} contagem de passos atribuída
+    pelo relógio a cada intervalo de cinco minutos. O valor é somado dentro da
+    janela para representar movimento acumulado. Segundo a documentação da
+    Garmin, a contagem usa o acelerômetro triaxial interno e pode depender do
+    movimento do braço, do ajuste do dispositivo e do pulso configurado
+    \cite{garminsteps2026}.
+    \item \textbf{Frequência cardíaca (\texttt{heart\_rate}):} frequência
+    cardíaca pontual estimada pelo relógio e agregada por média, mínimo e máximo
+    no intervalo. A Garmin informa que seus sensores ópticos observam alterações
+    no volume sanguíneo por meio de luz; movimento, ajuste, perfusão e
+    características individuais podem afetar a estimativa
+    \cite{garminhr2026}. Assim, essa variável é um sinal de monitoramento e não
+    substitui \sigla{ECG} ou medição clínica.
+    \item \textbf{Estresse (\texttt{stress\_level\_value}):} índice estimado a
+    partir da variabilidade da frequência cardíaca (\sigla{HRV}), e não uma medida
+    direta de estresse psicológico. A escala Garmin é de 0 a 100: 0--25 em
+    repouso, 26--50 baixo, 51--75 médio e 76--100 alto estresse
+    \cite{garminstress2026}. Como o CSV contém valores negativos que não
+    pertencem à escala documentada, eles foram tratados como ausência no
+    pré-processamento.
+    \item \textbf{Telemetria pontual do relógio (\texttt{sleep\_ts}):} registros
+    amostrados na grade de cinco minutos. Embora a fonte seja denominada
+    \texttt{sleep\_ts}, esses registros não representam medições de sono:
+    nesta análise, não se interpreta \texttt{sleep\_level} como estágio REM,
+    leve ou profundo; são usados apenas os sinais pontuais de passos,
+    frequência cardíaca e estresse estimado.
+    \item \textbf{Resumo diário do sono (\texttt{sleeptime}):} episódios de
+    sono agregados por dia, com duração total e segundos classificados como
+    profundo, leve, REM, acordado e não mensurável, além do número de episódios.
+    A Garmin descreve esses estágios como estimativas que combinam frequência
+    cardíaca, \sigla{HRV}, respiração e movimento, não como medições diretas da
+    atividade cerebral usada na polissonografia
+    \cite{garminsleep2026}. Por isso, esses valores são tratados como atributos
+    contextuais exploratórios.
+    \item \textbf{Nutrição:} totais de carboidratos, proteínas, gorduras e
+    fibras, em gramas, agregados por janela. Essa modalidade foi avaliada
+    somente como análise exploratória nos participantes que possuíam registros,
+    sem imputar refeições para os demais.
+\end{itemize}
+
+As modalidades de atividade física e composição corporal estão presentes na
+base, mas não foram incluídas nas comparações principais reportadas neste
+volume. Insulina basal e bolus foram avaliadas separadamente em uma análise
+complementar de 7 dias, sem integrar as configurações principais da busca
+multimodal. Essa distinção evita apresentar a existência de uma coluna no
+\textit{dataset} como se ela tivesse sido utilizada no modelo.
+
+\section{Justificativa}
+
+A relevância deste trabalho está associada ao impacto clínico da cetoacidose diabética, que representa uma das principais causas de hospitalização em pacientes com diabetes tipo 1. A utilização de modelos preditivos pode contribuir para a detecção precoce desse evento, permitindo intervenções preventivas, reduzindo custos no sistema de saúde e promovendo uma melhor qualidade de vida para as pessoas afetadas.
+
+A literatura indica que, apesar dos avanços no manejo, a \sigla{DKA} ainda representa até 76\% das mortes relacionadas ao diabetes em certas populações \cite{alsamhori2025}.
+
+Para um controle efetivo da cetoacidose diabética (\sigla{DKA}) é necessária uma monitoração contínua e de qualidade. A integração de aprendizado de máquina e acessórios inteligentes no controle da diabetes aumenta significativamente as estratégias de tratamento e a prevenção de crises glicêmicas, por permitir tratamentos mais personalizados, como regimes e doses de insulina mais precisos.
+
+Estudos de caso destacam as melhorias significativas nos resultados dos pacientes e nas técnicas de cuidado que a IA trouxe para o campo do controle do diabetes. Como por exemplo o uso de uma bomba de insulina controlada por um sistema de IA que mostrou eficácia prática. Aplicando técnicas de ML para analisar conjuntos de dados esse sistema foi capaz de constantemente adaptar as doses de insulina para as necessidades de cada paciente — demonstrando como a IA pode revolucionar o cuidado das pessoas com diabetes e com muito mais precisão \cite{alsamhori2025}.
+
+\subsection{Justificativa dos Modelos Avaliados}
+A pesquisa começou pela hipótese de que o \textit{Extreme Gradient Boosting}
+(\textit{XGBoost}), implementado como \texttt{XGBRegressor}, poderia oferecer
+bom desempenho para dados tabulares, relações não lineares e valores ausentes.
+Essa hipótese foi motivada pelas leituras da literatura revisada no início do
+trabalho. Por essa razão, o XGBoost foi adotado inicialmente como o principal
+modelo de interesse, mas não foi considerado vencedor sem comparação
+experimental.
+
+Os resultados obtidos permitiram avaliar o XGBoost sistematicamente contra
+Random Forest e Regressão Ridge, utilizando os mesmos atributos, alvo e
+particionamentos dos dados. O Random Forest representa outro método não linear
+baseado em árvores, enquanto a Ridge constitui um baseline linear regularizado
+e oferece uma referência mais simples.
+
+\begin{enumerate}
+\item \textbf{Tratamento Nativo de Dados Ausentes (\textit{Missing Data}):}
+Dispositivos de monitoramento contínuo de glicose (\sigla{CGM}) e sensores
+vestíveis apresentam falhas recorrentes de transmissão de dados no ambiente
+diário dos pacientes \cite{alsamhori2025}. Diferentemente de modelos
+estatísticos convencionais que exigem descarte ou imputações artificiais
+complexas, o XGBoost possui um algoritmo interno de rotas padrão para valores
+faltantes (\textit{sparsity-aware split finding}), aprendendo a melhor direção
+na árvore durante a fase de treinamento.
+
+\item \textbf{Modelagem de Relações Não Lineares Complexas:} A progressão para
+o risco de cetoacidose não segue uma dinâmica linear simples, resultando de
+interações multifatoriais entre taxas de hiperglicemia, descontinuidade do
+sensor e variabilidade glicêmica \cite{cichosz2025}. Como método de
+\textit{ensemble} baseado na combinação sequencial de árvores de decisão
+(\textit{Gradient Boosting}), o XGBoost é eficaz em mapear padrões não lineares
+e interações de ordem superior entre os atributos.
+
+\item \textbf{Controle de Regressão e Regularização (\textit{Overfitting}):}
+Como a modelagem trabalha com amostras organizadas em janelas temporais de
+curta duração, o risco de superajuste (\textit{overfitting}) é um fator
+crítico. O XGBoost inclui termos explícitos de regularização L1 ($\alpha$) e
+L2 ($\lambda$) na sua função de custo, além de parâmetros de poda de
+profundidade da árvore (\textit{max\_depth}) e subamostragem de dados
+(\textit{subsample}), favorecendo a generalização nos dados de teste.
+
+\item \textbf{Respaldo e Desempenho na Literatura Recente:} Na literatura
+focada em complicações glicêmicas agudas, o XGBoost é apontado como um dos
+algoritmos de maior consistência e acurácia. Revisões sistemáticas e estudos
+comparativos reportam que modelos baseados em gradiente impulsionado atingem
+valores de AUC entre $0{,}83$ e $0{,}92$ na identificação de eventos de
+\sigla{DKA} e elevação de corpos cetônicos
+\cite{alsamhori2025,cichosz2025}, superando modelos lineares tradicionais.
+\end{enumerate}
+
+
+\section{Objetivos do Trabalho}
+\subsection{Objetivo Geral}
+Este trabalho desenvolve e avalia modelos preditivos baseados em análise de
+dados e aprendizado de máquina para estimar um proxy de risco metabólico em
+pacientes com diabetes tipo 1, utilizando dados históricos de monitoramento
+contínuo e variáveis associadas. A análise compara modelos globais e avalia
+explicitamente a generalização temporal e entre participantes.
+
+
+\subsection{Objetivos Específicos}
+\begin{itemize}
+    \item Construir e validar uma heurística de escore de risco para \sigla{DKA} baseada em janelas temporais e diretrizes clínicas estabelecidas para hiperglicemia ($>$ 250 mg/dL) e falhas de sensor.
+    \item Avaliar e comparar o desempenho dos algoritmos XGBoost, Random Forest e Regressão Ridge em diferentes horizontes temporais (3, 7 e 14 dias).
+    \item Avaliar, como perspectiva para trabalhos futuros, a transição de um modelo global para uma possível adaptação individual por meio de técnicas de \textit{Transfer Learning}, sem considerar tais modelos como resultados experimentais desta etapa.
+    \item Propor, conceitualmente, o desenvolvimento de um diário digital ou sistema de rastreamento comportamental integrado para adicionar novas variáveis auxiliares (como idas ao banheiro/poliúria) ao algoritmo de predição.
+\end{itemize}
+
+
+\section{Metodologia}
+\begin{itemize}
+    \item \textbf{Coleta de dados:} utilização do dataset \sigla{T1D-UOM} \cite{alsuhaymi2025};
+
+    \item \textbf{Engenharia de atributos:}  limpeza, normalização e tratamento de dados faltantes;
+
+    \item \textbf{Modelagem:} comparação entre XGBoost, Random Forest e Regressão Ridge, usando modelos globais com avaliação agregada e por participante;
+
+    \item \textbf{Validação:} divisão temporal por participante e validação Leave-One-Participant-Out (\sigla{LOPO}), com \sigla{MAE}, \sigla{RMSE}, $R^2$, precisão, recall e F1;
+
+    \item \textbf{Análise:} comparação de desempenho e interpretação dos resultados.
+\end{itemize}
+
+\subsection{Caracterização do Dataset \sigla{T1D-UOM}}
+A base \textbf{\sigla{T1D-UOM}} fornece dados longitudinais multimodais de
+glicose, insulina basal e \textit{bolus}, nutrição, atividade física e sono
+para os participantes disponíveis. Neste trabalho, foram avaliadas as
+modalidades de glicose, sono e nutrição em um pipeline próprio, com auditoria
+de unidades, cobertura temporal e disponibilidade dos registros
+\cite{alsuhaymi2025}.
+
+Como análise multimodal, foi utilizada a base \sigla{T1D-UOM}, da Universidade
+de Manchester, preservando o participante como unidade de agrupamento e
+evitando a mistura aleatória de janelas temporais. As diferenças de unidade,
+cobertura temporal e disponibilidade das modalidades foram auditadas antes da
+modelagem. Como a base não possui necessariamente diagnóstico clínico validado
+de cetoacidose, o alvo foi tratado como proxy exploratório de risco metabólico.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figuras/analysis_pipeline.png}
+    \caption{Pipeline reprodutível da análise Manchester: dados brutos,
+    pré-processamento, auditorias, janelas temporais, modelos globais e
+    validações 70/30 e LOPO.}
+    \label{fig:pipeline}
+\end{figure}
+
+Na Figura~\ref{fig:pipeline}, o fluxo reúne as modalidades disponíveis,
+auditorias de integridade, janelas temporais, modelos globais e as duas
+estratégias de validação utilizadas no estudo.
+
+\subsection{Heurística do Score de Risco}
+Devido à ausência de diagnósticos laboratoriais de \sigla{DKA} no \textit{dataset} (pH
+sanguíneo ou cetonas), adotou-se uma heurística exploratória para a construção
+de um \textit{Score} de Risco ordinal, variando de 0 a 5. O escore foi
+calculado para cada janela temporal com base em cinco critérios cumulativos
+\cite{alsamhori2025,cichosz2025,dacunha2025,who2024}:
+\begin{enumerate}
+    \item Fração de leituras de glicose (\sigla{CGM}) $\geq$ 250 mg/dL superior a 5\%;
+    \item Fração de leituras de glicose (\sigla{CGM}) $\geq$ 250 mg/dL superior a 15\%;
+    \item Leitura máxima de glicose (\sigla{CGM}) $\geq$ 300 mg/dL;
+    \item Taxa de dados ausentes do sensor $\geq$ 10\%;
+    \item Taxa de dados ausentes do sensor $\geq$ 25\%.
+\end{enumerate}
+
+\subsubsection{Interpretação das classes do proxy}
+Como o \textit{risk score} representa o número de critérios simultaneamente
+atendidos na janela seguinte, ele assume seis classes ordinais:
+\begin{itemize}
+    \item \textbf{Classe 0:} nenhum dos cinco critérios foi atendido;
+    \item \textbf{Classe 1:} exatamente um critério foi atendido;
+    \item \textbf{Classe 2:} exatamente dois critérios foram atendidos;
+    \item \textbf{Classe 3:} exatamente três critérios foram atendidos;
+    \item \textbf{Classe 4:} exatamente quatro critérios foram atendidos;
+    \item \textbf{Classe 5:} todos os cinco critérios foram atendidos.
+\end{itemize}
+Quanto maior a classe, maior a combinação de hiperglicemia e ausência de dados
+do sensor observada pelo proxy. Essas classes não são diagnósticos clínicos de
+DKA nem etapas clínicas sequenciais.
+
+Na análise classificatória binária, a classe 0 é tratada como negativa e as
+classes 1 a 5 são agrupadas como positivas. Essa transformação permite calcular
+precisão, recall e outras métricas secundárias, mas não transforma o proxy em
+um desfecho clínico observado.
+
+\subsubsection{Escopo efetivo das análises multimodais}
+Os modelos foram treinados globalmente; não foram treinados modelos exclusivos
+para cada participante. As comparações multimodais realizadas nesta etapa
+foram limitadas a configurações específicas:
+\begin{itemize}
+    \item glicose exclusivamente;
+    \item glicose com resumo diário do sono;
+    \item glicose com atributos pontuais de \texttt{sleep\_ts}, incluindo passos,
+    frequência cardíaca e estresse estimado;
+    \item glicose com totais nutricionais;
+    \item combinações entre glicose, \texttt{sleep\_ts}, resumo diário de sono
+    e nutrição avaliadas pelo procedimento sistemático de busca no \sigla{LOPO}.
+\end{itemize}
+Essas análises não configuram uma comparação completa de todas as modalidades
+com todos os modelos em todas as populações. Atividade física e composição
+corporal foram auditadas ou descritas, mas não entraram nas comparações
+principais. Insulina basal e bolus tiveram uma comparação complementar
+separada de 7 dias e não integraram a busca combinatória principal.
+
+\subsection{Engenharia de Atributos}
+Foram extraídas estatísticas agregadas simples, como média, desvio padrão,
+máximo e mínimo para cada variável, visando capturar tendências e dispersões.
+Os registros foram agrupados em janelas temporais de 3, 7 e 14 dias. A
+modelagem foi estruturada de forma que os atributos extraídos em uma janela de
+tempo $t$ previssem o escore de risco da janela subsequente $t+1$, conforme a
+definição apresentada na seção de heurística do \textit{Score} de Risco.
+
+\subsection{Coleta de Dados e Pré-processamento}
+Os dados utilizados foram originados do \textit{\sigla{T1D-UOM}} (um dataset longitudinal
+e multimodal de diabetes tipo 1). O carregamento preservou a estrutura de
+séries temporais por paciente. O pré-processamento padronizou timestamps,
+unidades e tipos numéricos, agregou eventos repetidos por bin e registrou
+ausências sem inventar medições. Os registros foram então organizados para o
+alinhamento das janelas temporais de análise preditiva.
+
+\subsection{Modelagem e Validação}
+Foram comparados três modelos de regressão supervisionada para prever o
+\textit{risk score} ordinal da janela seguinte: XGBoost, Random Forest e
+Regressão Ridge. Todos utilizaram as mesmas características, o mesmo alvo e
+os mesmos particionamentos dos dados.
+
+\subsubsection{Configuração dos algoritmos}
+\begin{itemize}
+    \item \textbf{XGBoost:} \texttt{XGBRegressor} com 100 estimadores,
+    profundidade máxima igual a 3, taxa de aprendizado de 0,05, função objetivo
+    \texttt{reg:squarederror}, métrica \texttt{rmse} e semente aleatória 42.
+    \item \textbf{Random Forest:} \texttt{RandomForestRegressor} com 300
+    árvores, mínimo de duas amostras por folha e semente aleatória 42.
+    \item \textbf{Ridge:} \texttt{Pipeline} com \texttt{StandardScaler} seguido
+    por \texttt{Ridge(alpha=1.0)}. A padronização foi ajustada somente com os
+    dados de treinamento de cada execução e a regularização utilizou penalização
+    L2.
+\end{itemize}
+
+A configuração foi mantida fixa entre os modelos e não houve ajuste amplo de
+hiperparâmetros nesta etapa. O XGBoost e o Random Forest representam relações
+não lineares em atributos tabulares; a Ridge constitui um baseline linear
+regularizado.
+
+As características da janela temporal $t$ foram utilizadas para estimar o
+\textit{risk score} da janela consecutiva $t+1$, definido pelos cinco critérios
+descritos anteriormente. A avaliação foi realizada por regressão, usando
+\sigla{MAE}, \sigla{RMSE} e
+$R^2$; as métricas de classificação foram obtidas apenas como análise
+secundária, após converter o escore em classe binária.
+
+Os dados provenientes do relógio foram tratados em duas estruturas. Os
+arquivos com a coluna \texttt{sleep\_ts} representam telemetria pontual
+amostrada em intervalos de cinco minutos, e não estágios de sono. Os arquivos
+\texttt{sleeptime} representam episódios, contendo
+\texttt{start\_date\_ts}, duração e tempo em cada estágio do sono. Para evitar
+criar uma precisão temporal artificial, os episódios foram agregados por
+participante e dia e depois resumidos dentro de cada janela de 7 dias. Essa
+configuração foi ativada separadamente da configuração que utiliza apenas
+glicose, permitindo comparar o efeito do resumo diário do sono e, em análise
+distinta, o efeito da telemetria pontual do relógio.
+
+Foram utilizadas duas estratégias de validação. Na divisão temporal por
+participante, os primeiros 70\% das janelas válidas de cada participante foram
+usados no treinamento e os 30\% finais foram mantidos para teste. Essa
+estratégia mede a previsão de períodos futuros de participantes já conhecidos.
+Na validação \textit{Leave-One-Participant-Out} (\sigla{LOPO}), um participante foi
+mantido integralmente fora do treinamento em cada rodada, permitindo avaliar
+melhor a generalização para participantes não observados pelo modelo.
+
+As duas validações utilizam modelos globais: nenhum modelo foi treinado
+exclusivamente para um único participante nesta etapa. Assim, a expressão
+“avaliação por participante” indica a apresentação separada e agregada das
+previsões em cada participante, não treinamento individualizado. A adaptação
+por participante e técnicas de \textit{Transfer Learning} permanecem como
+perspectivas metodológicas para trabalhos futuros.
+
+Para investigar sistematicamente o efeito das modalidades, foi executada uma
+busca combinatória no \sigla{LOPO} de 7 dias. A glicose foi mantida em todas as
+configurações e foram testadas todas as combinações entre
+\texttt{sleep\_ts}, resumo diário de sono e nutrição. Os resultados dessa
+busca são apresentados separadamente da divisão temporal e do baseline
+somente com glicose.
+
+\section{Experimentos e Resultados}
+
+\subsection{Análise classificatória}
+Além da regressão ordinal, foi realizada uma análise classificatória
+secundária. A classe positiva foi definida como
+\textit{risk score} $\geq 1$, mantendo a mesma previsão contínua produzida
+pelos regressores. Assim, a classificação não representa um diagnóstico de
+\sigla{DKA}; ela apenas verifica se o modelo identificou uma janela com pelo menos um
+critério do proxy. Foram calculadas precisão, recall, F1, acurácia balanceada e
+ROC-AUC, sempre no conjunto de teste de cada rodada \sigla{LOPO}.
+
+Esse limiar agrupa as classes ordinais 1 a 5 e produz desbalanceamento em favor
+da classe positiva. No horizonte de 7 dias, a divisão 70\%/30\% manteve 20
+janelas negativas e 58 positivas no teste, ou seja, aproximadamente 74,4\%
+positivas. No \sigla{LOPO}, foram 59 negativas e 169 positivas, cerca de
+74,1\% positivas. Portanto, não é válido interpretar somente a acurácia: uma
+estratégia trivial que classificasse todas as janelas como positivas estaria
+certa em cerca de três quartos dos casos. As métricas balanceadas, o recall,
+a precisão e a ROC-AUC reduzem esse risco de interpretação, mas não eliminam
+o desbalanceamento.
+
+Não há vazamento temporal direto, pois os atributos são extraídos da janela
+$t$ e o \textit{risk score} é calculado na janela seguinte $t+1$. Entretanto,
+existe uma proximidade metodológica importante: o rótulo é derivado dos dados
+de glicose da própria série que participa dos atributos. Por isso, o bom
+desempenho pode refletir persistência temporária de glicemia e não capacidade
+clínica para detectar \sigla{DKA}. A sensibilidade ao limiar positivo foi
+testada separadamente com \textit{risk score} $\geq 3$, mantendo os mesmos
+dados, modelos e particionamentos.
+
+Para a configuração somente com glicose, o XGBoost obteve precisão de 0,949,
+recall de 0,888, F1 de 0,917, acurácia balanceada de 0,876 e ROC-AUC de 0,911.
+O Random Forest obteve precisão de 0,956, recall de 0,899, F1 de 0,927,
+acurácia balanceada de 0,890 e ROC-AUC de 0,916. Entre os modelos de árvore, o Random Forest apresentou vantagem sobre o
+XGBoost na classificação principal.
+
+\begin{table}[H]
+    \centering
+    \caption{Matrizes de confusão e métricas positivas no horizonte de 7 dias,
+    somente com glicose.}
+    \label{tab:matrizes-confusao}
+    \small
+    \begin{tabular}{llrrrrrr}
+        \toprule
+        Validação & Modelo & VN & FP & FN & VP & Precisão & Recall \\
+        \midrule
+        70\%/30\% & XGBoost & 16 & 4 & 7 & 51 & 0,927 & 0,879 \\
+        70\%/30\% & Random Forest & 16 & 4 & 6 & 52 & 0,929 & 0,897 \\
+        70\%/30\% & Ridge & 17 & 3 & 6 & 52 & 0,945 & 0,897 \\
+        LOPO & XGBoost & 51 & 8 & 19 & 150 & 0,949 & 0,888 \\
+        LOPO & Random Forest & 52 & 7 & 17 & 152 & 0,956 & 0,899 \\
+        LOPO & Ridge & 51 & 8 & 18 & 151 & 0,950 & 0,893 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Na Tabela~\ref{tab:matrizes-confusao}, VN representa janela negativa corretamente
+identificada, FP representa janela negativa classificada incorretamente como
+positiva, FN representa janela positiva não detectada e VP representa janela
+positiva corretamente identificada. A classe positiva é \textit{risk score}
+$\geq 1$.
+
+A precisão mede a confiabilidade dos alertas positivos: de todas as janelas
+indicadas como positivas pelo modelo, a proporção que realmente pertence à
+classe positiva. A precisão elevada dos dois modelos de árvore indica baixa ocorrência
+de alarmes positivos incorretos. O recall mede a capacidade de identificar
+as janelas positivas observadas; por isso, é especialmente sensível aos
+falsos negativos. Na divisão temporal 70\%/30\%, o Random Forest reduziu o
+número de falsos negativos de 7 para 6 em relação ao XGBoost. No \sigla{LOPO},
+também apresentou menos falsos negativos: 17 contra 19.
+Na mesma divisão 70\%/30\%, a Ridge obteve precisão de 0,945 e recall de
+0,897, com três falsos positivos e seis falsos negativos.
+
+Em um contexto médico, esses valores são relevantes porque um falso negativo
+pode representar uma janela de risco não detectada, enquanto um falso positivo
+pode gerar alerta desnecessário e carga adicional para o usuário ou equipe
+assistencial. Não existe uma preferência universal entre precisão e recall:
+dependendo da consequência do erro, pode ser necessário maximizar a detecção
+ou reduzir alertas. Nesta pesquisa, ambas permanecem secundárias ao alvo
+proxy; como o rótulo não inclui diagnóstico clínico de \sigla{DKA}, os
+resultados não demonstram segurança clínica para triagem ou intervenção.
+
+\begin{table}[H]
+    \centering
+    \caption{Matrizes de confusão no LOPO pelos horizontes temporais,
+    somente com glicose.}
+    \label{tab:matrizes-confusao-horizontes}
+    \small
+    \begin{tabular}{llrrrrrr}
+        \toprule
+        Horizonte & Modelo & VN & FP & FN & VP & Precisão & Recall \\
+        \midrule
+        3 dias & XGBoost & 132 & 27 & 31 & 346 & 0,928 & 0,918 \\
+        3 dias & Random Forest & 129 & 30 & 25 & 352 & 0,921 & 0,934 \\
+        3 dias & Ridge & 132 & 27 & 26 & 351 & 0,929 & 0,931 \\
+        7 dias & XGBoost & 51 & 8 & 19 & 150 & 0,949 & 0,888 \\
+        7 dias & Random Forest & 52 & 7 & 17 & 152 & 0,956 & 0,899 \\
+        7 dias & Ridge & 51 & 8 & 18 & 151 & 0,950 & 0,893 \\
+        14 dias & XGBoost & 17 & 6 & 14 & 72 & 0,923 & 0,837 \\
+        14 dias & Random Forest & 19 & 4 & 9 & 77 & 0,951 & 0,895 \\
+        14 dias & Ridge & 21 & 2 & 12 & 74 & 0,974 & 0,860 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+A Tabela~\ref{tab:matrizes-confusao-horizontes} permite comparar diretamente
+os falsos positivos e negativos nos horizontes de 3, 7 e 14 dias.
+
+\begin{table}[H]
+    \centering
+    \caption{Matrizes de confusão com \textit{risk score} $\geq 3$ na divisão
+    temporal 70\%/30\% e no horizonte de 7 dias.}
+    \label{tab:matrizes-confusao-threshold3-temporal}
+    \small
+    \begin{tabular}{lrrrrrrr}
+        \toprule
+        Modelo & VN & FP & FN & VP & Precisão & Recall & Ac. balanceada \\
+        \midrule
+        XGBoost & 44 & 3 & 6 & 25 & 0,893 & 0,806 & 0,871 \\
+        Random Forest & 42 & 5 & 9 & 22 & 0,815 & 0,710 & 0,802 \\
+        Ridge & 45 & 2 & 9 & 22 & 0,917 & 0,710 & 0,834 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{Matrizes de confusão com \textit{risk score} $\geq 3$ na validação
+    \sigla{LOPO} pelos horizontes temporais.}
+    \label{tab:matrizes-confusao-threshold3-lopo}
+    \small
+    \begin{tabular}{llrrrrrrr}
+        \toprule
+        Horizonte & Modelo & VN & FP & FN & VP & Precisão & Recall & Ac. balanceada \\
+        \midrule
+        3 dias & XGBoost & 328 & 36 & 99 & 73 & 0,670 & 0,424 & 0,663 \\
+        3 dias & Random Forest & 311 & 53 & 81 & 91 & 0,632 & 0,529 & 0,692 \\
+        3 dias & Ridge & 333 & 31 & 101 & 71 & 0,696 & 0,413 & 0,664 \\
+        7 dias & XGBoost & 125 & 15 & 37 & 51 & 0,773 & 0,580 & 0,736 \\
+        7 dias & Random Forest & 123 & 17 & 31 & 57 & 0,770 & 0,648 & 0,763 \\
+        7 dias & Ridge & 128 & 12 & 32 & 56 & 0,824 & 0,636 & 0,775 \\
+        14 dias & XGBoost & 58 & 5 & 21 & 25 & 0,833 & 0,543 & 0,732 \\
+        14 dias & Random Forest & 57 & 6 & 14 & 32 & 0,842 & 0,696 & 0,800 \\
+        14 dias & Ridge & 58 & 5 & 12 & 34 & 0,872 & 0,739 & 0,830 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+As Tabelas~\ref{tab:matrizes-confusao-threshold3-temporal} e
+\ref{tab:matrizes-confusao-threshold3-lopo} apresentam os resultados completos
+do limiar positivo $\geq 3$. Com esse limiar, a prevalência positiva ficou mais próxima de
+50\%: 31 de 78 janelas (39,7\%) na divisão 70\%/30\%; 172 de 536 (32,1\%) no
+\sigla{LOPO} de 3 dias; 88 de 228 (38,6\%) no \sigla{LOPO} de 7 dias; e 46 de
+109 (42,2\%) no \sigla{LOPO} de 14 dias. Na divisão 70\%/30\%, a Ridge obteve
+a maior precisão (0,917) e o XGBoost o maior recall (0,806). No \sigla{LOPO}
+de 7 dias, a Ridge obteve a maior precisão (0,824), enquanto o Random Forest
+obteve o maior recall entre os modelos de árvores (0,648). No \sigla{LOPO}
+de 14 dias, a Ridge apresentou o melhor equilíbrio entre precisão (0,872),
+recall (0,739) e acurácia balanceada (0,830).
+
+A comparação dos horizontes mostra que não existe uma única métrica que
+domina todas as configurações. No horizonte de 3 dias, o Random Forest obteve
+o maior recall (0,934), seguido pela Ridge (0,931); na divisão temporal
+70\%/30\% de 7 dias, a Ridge apresentou a maior precisão (0,945). No \sigla{LOPO}
+de 14 dias, a Ridge obteve a maior precisão (0,974) e somente dois falsos
+positivos, mas recall de 0,860, inferior ao recall do Random Forest (0,895).
+Esse contraste confirma por que precisão e recall devem ser analisados juntos:
+uma redução de alertas incorretos pode ocorrer ao custo de deixar mais
+janelas positivas sem detecção.
+
+Com glicose e resumo diário de sono, o Random Forest manteve precisão de 0,956,
+recall de 0,899 e F1 de 0,927. Com glicose e nutrição, apresentou precisão de
+0,938, recall de 0,899 e F1 de 0,918. Com glicose, sono e nutrição, apresentou
+precisão de 0,956, recall de 0,899 e F1 de 0,927. Essas métricas devem ser
+interpretadas junto com a distribuição das classes, a quantidade de
+participantes e o fato de o rótulo ser um proxy derivado da glicose.
+
+\subsection{Avaliação dos Horizontes}
+O pipeline permite executar separadamente janelas de 3, 7 e 14 dias por meio
+do parâmetro \texttt{-{}-days}. A auditoria temporal confirmou que as janelas
+respeitam estritamente a ordem cronológica: a janela $t$ termina antes do
+início da janela-alvo $t+1$. Foram obtidas 536, 228 e 109 janelas \sigla{LOPO}
+utilizáveis nos horizontes de 3, 7 e 14 dias, respectivamente.
+
+O horizonte de 7 dias é adotado como referência principal das comparações
+multimodais por equilibrar quantidade de janelas, estabilidade da agregação e
+possibilidade de avaliação conjunta das modalidades. Os horizontes de 3 e 14
+dias são apresentados como análises de sensibilidade para verificar a influência
+do período de agregação.
+
+Na validação \sigla{LOPO} somente com glicose, o melhor resultado foi obtido
+pela Regressão Ridge no horizonte de 7 dias, com \sigla{MAE} de 0,704,
+\sigla{RMSE} de 0,877 e $R^2$ de 0,696. O Random Forest apresentou o melhor
+desempenho entre os modelos de árvores nesse horizonte, com \sigla{MAE} de
+0,817, \sigla{RMSE} de 0,988 e $R^2$ de 0,614.
+
+\begin{table}[H]
+    \centering
+    \caption{Desempenho na divisão temporal 70\%/30\% por participante,
+    somente com glicose, no horizonte de 7 dias.}
+    \label{tab:temporal-7030-glucose}
+    \small
+    \begin{tabular}{lrrrr}
+        \toprule
+        Modelo & MAE & RMSE & $R^2$ & Janelas \\
+        \midrule
+        XGBoost & 0,704 & 0,948 & 0,655 & 150 treino / 78 teste \\
+        Random Forest & 0,768 & 1,042 & 0,583 & 150 treino / 78 teste \\
+        Ridge & 0,663 & 0,864 & 0,714 & 150 treino / 78 teste \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Na Tabela~\ref{tab:temporal-7030-glucose}, a Ridge apresentou o melhor
+desempenho, seguida pelo XGBoost e pelo Random Forest. Os resultados desta divisão medem
+a previsão de períodos futuros dos participantes já conhecidos no treinamento.
+Na Tabela~\ref{tab:horizons-glucose}, cada linha resume o LOPO de um horizonte.
+No \sigla{LOPO}, um participante inteiro é retirado de cada treinamento;
+portanto, os erros tendem a ser maiores e não devem ser comparados diretamente
+como se representassem a mesma dificuldade experimental.
+
+\begin{table}[H]
+    \centering
+    \caption{Desempenho LOPO por horizonte para a configuração somente com glicose.}
+    \label{tab:horizons-glucose}
+    \small
+    \begin{tabular}{llrrrr}
+        \toprule
+        Horizonte & Modelo & MAE & RMSE & $R^2$ & Janelas \\
+        \midrule
+        3 dias & XGBoost & 0,833 & 1,055 & 0,546 & 536 \\
+        3 dias & Random Forest & 0,829 & 1,054 & 0,547 & 536 \\
+        3 dias & Ridge & 0,777 & 0,974 & 0,613 & 536 \\
+        7 dias & XGBoost & 0,837 & 1,023 & 0,587 & 228 \\
+        7 dias & Random Forest & 0,817 & 0,988 & 0,614 & 228 \\
+        7 dias & Ridge & 0,704 & 0,877 & 0,696 & 228 \\
+        14 dias & XGBoost & 0,675 & 0,860 & 0,688 & 109 \\
+        14 dias & Random Forest & 0,708 & 0,881 & 0,673 & 109 \\
+        14 dias & Ridge & 0,621 & 0,797 & 0,732 & 109 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{Incerteza bootstrap por participante no LOPO de 7 dias,
+    configuração somente com glicose. Intervalos de 95\% obtidos pelos
+    percentis 2,5\% e 97,5\%.}
+    \label{tab:incerteza-lopo-7d}
+    \small
+    \begin{tabular}{lrrrrrr}
+        \toprule
+        Modelo & MAE & IC 95\% MAE & RMSE & IC 95\% RMSE &
+        $R^2$ & IC 95\% $R^2$ \\
+        \midrule
+        XGBoost & 0,837 & [0,709; 0,980] & 1,023 & [0,872; 1,176]
+        & 0,587 & [0,273; 0,705] \\
+        Random Forest & 0,817 & [0,705; 0,945] & 0,988
+        & [0,850; 1,124] & 0,614 & [0,344; 0,712] \\
+        Ridge & 0,704 & [0,586; 0,818] & 0,877
+        & [0,753; 1,008] & 0,696 & [0,457; 0,789] \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+A Tabela~\ref{tab:incerteza-lopo-7d} resume os intervalos bootstrap dos três
+modelos. As diferenças pareadas de MAE obtidas pelas mesmas reamostras
+bootstrap
+favoreceram a Ridge: a diferença entre Ridge e XGBoost foi de
+$-0,136$, com intervalo de 95\% de $[-0,247; -0,049]$, e a diferença entre
+Ridge e Random Forest foi de $-0,115$, com intervalo de
+$[-0,202; -0,040]$. Como ambos os intervalos não contêm zero, a direção da
+vantagem da Ridge sobre os dois modelos foi consistente nas reamostras. Esse
+resultado não elimina a incerteza amostral entre participantes e não substitui
+validação externa.
+
+A análise de erros indica heterogeneidade relevante entre participantes. O
+MAE da Ridge variou de valores próximos de 0,043 a 1,154, o que demonstra que
+o desempenho agregado não representa igualmente todos os participantes. O
+participante 2307 apresentou o menor MAE da Ridge nesta rodada, enquanto os
+participantes 2309 e 2401 ficaram entre os maiores; por si só, essa variação
+não permite atribuir causa a cobertura, ausência de dados ou características
+fisiológicas.
+
+Por classe verdadeira, a pior dificuldade ocorreu na classe 5: o MAE foi
+1,653 no XGBoost, 1,666 no Random Forest e 1,301 na Ridge. Todas as três
+previsões tiveram viés negativo nessa classe, indicando subestimação da
+combinação máxima de critérios do proxy. Nas classes 0 e 1, a Ridge apresentou
+MAE de 0,518 e 0,450, respectivamente, mas a classe 1 manteve viés negativo.
+Esses resultados sugerem que os modelos podem ser menos precisos nas extremidades
+ordinais e não autorizam concluir que a previsão seria segura para decisões
+clínicas.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparação multimodal no horizonte principal de 7 dias na validação \sigla{LOPO}.}
+    \label{tab:multimodal-7d}
+    \small
+    \begin{tabular}{p{4.5cm}lrrrr}
+        \toprule
+        Configuração & Modelo & MAE & RMSE & $R^2$ & Participantes \\
+        \midrule
+        Glicose & XGBoost & 0,837 & 1,023 & 0,587 & 17 \\
+        Glicose & Random Forest & 0,817 & 0,988 & 0,614 & 17 \\
+        Glicose & Ridge & 0,704 & 0,877 & 0,696 & 17 \\
+        Glicose + resumo diário de sono & XGBoost & 0,812 & 1,033 & 0,578 & 17 \\
+        Glicose + resumo diário de sono & Random Forest & 0,767 & 0,967 & 0,631 & 17 \\
+        Glicose + resumo diário de sono & Ridge & 0,731 & 0,894 & 0,684 & 17 \\
+        Glicose + telemetria pontual do relógio & XGBoost & 0,860 & 1,042 & 0,571 & 17 \\
+        Glicose + telemetria pontual do relógio & Random Forest & 0,846 & 1,011 & 0,596 & 17 \\
+        Glicose + telemetria pontual do relógio & Ridge & 0,728 & 0,895 & 0,684 & 17 \\
+        Glicose + nutrição & XGBoost & 0,864 & 1,094 & 0,527 & 17 \\
+        Glicose + nutrição & Random Forest & 0,812 & 1,010 & 0,597 & 17 \\
+        Glicose + nutrição & Ridge & 0,689 & 0,884 & 0,691 & 17 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Todas as configurações da tabela possuem 228 janelas agregadas no conjunto
+\sigla{LOPO}. A nutrição foi mantida como análise exploratória: participantes
+sem registros nutricionais tiveram os atributos dessa modalidade tratados como
+ausência, sem imputação artificial de refeições.
+
+A Tabela~\ref{tab:multimodal-7d} consolida os três modelos nas quatro
+configurações principais do horizonte de 7 dias. Na configuração com resumo diário de sono, a Regressão Ridge também apresentou
+o menor \sigla{MAE} nos três horizontes: 0,797, 0,731 e 0,674 para 3, 7 e
+14 dias, respectivamente. No horizonte de 7 dias, o Random Forest obteve
+\sigla{MAE} de 0,767 e $R^2$ de 0,631, enquanto a Ridge obteve \sigla{MAE} de
+0,731, \sigla{RMSE} de 0,894 e $R^2$ de 0,684. Esses resultados distinguem a
+comparação de modalidades da comparação entre algoritmos.
+
+\subsubsection{Insulina basal e bolus}
+Como análise complementar de 7 dias, foram testadas doses totais de insulina
+basal e bolus agregadas na janela temporal $t$ para prever o proxy da janela
+$t+1$. Na divisão 70\%/30\%, a configuração que incluiu basal e bolus reduziu
+o \sigla{MAE} do XGBoost de 0,704 para 0,670 e do Random Forest de 0,768 para
+0,742. No LOPO, porém, essa combinação não apresentou o mesmo ganho: o
+\sigla{MAE} do XGBoost passou de 0,837 para 0,893, o do Random Forest de 0,817
+para 0,842 e o da Ridge de 0,704 para 0,709. O desempenho no 70/30 indica
+informação potencial das doses em participantes já conhecidos, mas o resultado
+misto no LOPO não sustenta generalização para participantes novos.
+
+Os resultados não permitem inferir diretamente uma dose esquecida ou incorreta.
+O alvo continua sendo derivado de glicose e ausência do sensor, e não há
+desfecho clínico observado de DKA que valide essa interpretação. Insulina
+basal e bolus devem, portanto, ser avaliadas como atributos exploratórios,
+com cobertura, alinhamento temporal e sensibilidade a erros de registro
+examinados em trabalhos posteriores.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figuras/lopo_7d_comparison.png}
+    \caption{Comparação multimodal na validação \sigla{LOPO} de 7 dias:
+    glicose; glicose + resumo diário de sono; e glicose + telemetria pontual
+    do relógio, com passos, frequência cardíaca e estresse estimado.
+    São apresentados XGBoost, Random Forest e Ridge sobre 228 janelas.}
+    \label{fig:lopo7}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figuras/proxy_distribution_7d.png}
+    \caption{Distribuição das seis classes ordinais do proxy e das duas classes
+    do limiar binário \textit{risk score} $\geq 1$ na divisão temporal 70\%/30\%
+    de 7 dias, com 150 janelas de treino e 78 de teste.}
+    \label{fig:proxy-distribution-7d}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figuras/lopo_horizons_comparison.png}
+    \caption{Desempenho \sigla{LOPO} nos horizontes de 3, 7 e 14 dias,
+    comparando glicose e glicose + resumo diário de sono com XGBoost,
+    Random Forest e Ridge. As janelas utilizáveis são 536, 228 e 109,
+    respectivamente.}
+    \label{fig:horizons}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figuras/lopo_uncertainty_7d.png}
+    \caption{Incerteza bootstrap por participante no LOPO de 7 dias,
+    somente com glicose. Os intervalos de 95\% são obtidos pelas reamostras
+    dos 17 participantes.}
+    \label{fig:incerteza-lopo-7d}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figuras/lopo_participant_error_7d.png}
+    \caption{Análise de erros no LOPO de 7 dias por participante e por classe
+    verdadeira do proxy. Os resultados são exploratórios e não representam
+    capacidade clínica de detectar DKA.}
+    \label{fig:erros-lopo-7d}
+\end{figure}
+
+A Figura \ref{fig:lopo7} resume as configurações glicose, glicose + resumo
+diário de sono e glicose + telemetria pontual do relógio, com passos,
+frequência cardíaca e estresse estimado. A Figura
+\ref{fig:proxy-distribution-7d} documenta o desbalanceamento das classes
+ordinais e binárias, enquanto a Figura \ref{fig:horizons} mostra o desempenho
+dos modelos nos diferentes horizontes. A Figura
+\ref{fig:incerteza-lopo-7d} apresenta a incerteza amostral e a Figura
+\ref{fig:erros-lopo-7d} resume a heterogeneidade dos erros. As figuras são descritivas e não substituem a avaliação estatística
+por participante.
+
+\section{Discussão dos Resultados}
+
+Os resultados devem ser interpretados em três níveis: comparação entre
+algoritmos, efeito das modalidades adicionais e efeito do horizonte temporal.
+Como a avaliação principal foi feita por \sigla{LOPO}, cada participante foi
+mantido integralmente fora do treinamento em sua rodada. Portanto, os números
+não representam apenas a capacidade de interpolar períodos futuros de pessoas
+já conhecidas, mas também a dificuldade de transferir padrões entre
+participantes com diferentes coberturas e comportamentos fisiológicos.
+
+\subsection{Comparação entre os modelos}
+
+A Regressão Ridge apresentou o melhor resultado na configuração somente com
+glicose nos horizontes de 7 e 14 dias. No horizonte de 7 dias, reduziu o
+\sigla{MAE} para 0,704, contra 0,817 do Random Forest e 0,837 do XGBoost. No
+horizonte de 14 dias, obteve \sigla{MAE} de 0,621 e $R^2$ de 0,732. Esse
+resultado corresponde à validação \sigla{LOPO}; na divisão temporal
+70\%/30\%, a Ridge obteve \sigla{MAE} de 0,663, \sigla{RMSE} de 0,864 e
+$R^2$ de 0,714. Essas divisões respondem perguntas distintas e não devem ser
+ordenadas como uma única medida de dificuldade.
+
+Esse resultado não significa que a relação entre os atributos e o proxy seja
+necessariamente simples em termos fisiológicos. Ele indica que, após a
+agregação das séries em médias, dispersões, mínimos, máximos e ausência do
+sensor, uma combinação linear regularizada foi suficiente para generalizar
+melhor nesta amostra.
+
+Esse achado também relativiza a hipótese inicial de superioridade do XGBoost.
+Modelos de árvores são capazes de representar interações não lineares, mas
+essa flexibilidade não produziu a menor métrica no \sigla{LOPO}. O XGBoost
+continuou competitivo e apresentou o menor \sigla{MAE} entre os modelos no
+horizonte de 14 dias quando comparado ao Random Forest, mas a Ridge permaneceu
+à frente. Assim, a escolha do modelo deve ser baseada na validação realizada
+na população estudada, e não somente no desempenho relatado pela literatura.
+
+\subsection{Efeito das modalidades de sono e nutrição}
+
+O resumo diário de sono teve efeito dependente do algoritmo. Para o Random
+Forest no horizonte de 7 dias, a inclusão do sono reduziu o \sigla{MAE} de
+0,817 para 0,767 e aumentou o $R^2$ de 0,614 para 0,631. No XGBoost, houve
+redução do \sigla{MAE} de 0,837 para 0,812, mas o $R^2$ caiu de 0,587 para
+0,578. Para a Ridge, o \sigla{MAE} aumentou de 0,704 para 0,731, embora o
+resultado permanecesse melhor que o dos dois modelos de árvores nessa
+configuração. Portanto, não é adequado afirmar que o sono melhora
+uniformemente a previsão; seu benefício depende do modelo e da métrica
+considerada.
+
+O resumo diário superou os atributos pontuais de \texttt{sleep\_ts} na
+comparação disponível para o Random Forest. Uma possível interpretação
+metodológica é que duração e composição agregadas do sono sejam mais robustas
+à baixa cobertura e aos intervalos ausentes do relógio do que sinais pontuais.
+Essa interpretação é exploratória: os episódios de sono são estimativas do
+dispositivo, não medidas equivalentes à polissonografia, e a cobertura do
+\texttt{sleep\_ts} não foi uniforme entre participantes.
+
+A nutrição não deve ser apresentada como evidência conclusiva de ganho. A
+análise restrita incluiu apenas 15 participantes, enquanto o baseline completo
+incluiu 17. Na população completa, a busca combinatória favoreceu glicose +
+nutrição com Ridge, mas os atributos ausentes foram preenchidos como ausência;
+na população observada, o melhor resultado foi glicose + resumo diário de sono
+sem melhoria adicional consistente da nutrição. A diferença de população
+impede uma comparação direta e reforça a necessidade de registrar a
+disponibilidade da modalidade junto com cada métrica.
+
+\subsection{Efeito do horizonte temporal}
+
+O horizonte de 3 dias produziu 536 janelas, mas teve desempenho inferior ao
+horizonte de 14 dias para os três modelos na configuração somente com glicose.
+No horizonte mais longo, a Ridge alcançou $R^2$ de 0,732, contra 0,613 em
+3 dias. A agregação mais longa pode reduzir oscilações locais e representar
+um padrão metabólico mais estável, mas essa hipótese não deve ser confundida
+com uma vantagem clínica do horizonte de 14 dias. O horizonte de 14 dias teve
+somente 109 janelas, e a menor quantidade de observações aumenta a incerteza
+da estimativa e limita a capacidade de avaliar eventos raros.
+
+A janela de 7 dias permanece uma escolha intermediária: possui 228 janelas,
+permite comparação com as configurações de sono e apresenta desempenho
+competitivo para todos os modelos. Dessa forma, ela é uma referência
+operacional para as análises multimodais, mas não deve ser declarada como
+ótima para qualquer participante ou aplicação clínica.
+
+\subsection{Interpretação clínica e limitações}
+
+As métricas classificatórias elevadas não devem ser lidas como detecção de
+\sigla{DKA}. A classe positiva foi criada a partir do próprio \textit{risk
+score}, que por sua vez é derivado de hiperglicemia e ausência do sensor.
+Consequentemente, a análise classificatória verifica a capacidade de recuperar
+um proxy definido pela glicose; ela não valida cetonas, pH, bicarbonato,
+ânion gap, hospitalização ou diagnóstico clínico. A ausência desses desfechos
+é a principal limitação para qualquer interpretação clínica.
+
+Além disso, a validação \sigla{LOPO} avalia generalização entre os 17
+participantes disponíveis, mas não substitui uma validação externa em outra
+população, dispositivo ou período. As diferenças de cobertura entre
+modalidades, a presença de participantes sem nutrição observada e a
+dependência temporal entre janelas também podem influenciar as estimativas.
+Os resultados sustentam a utilidade do pipeline para investigação de um proxy
+metabólico, não a implantação de um alerta clínico.
+
+\section{Repositório do Projeto}
+O código-fonte, os scripts de pré-processamento, as auditorias e os arquivos
+necessários para reproduzir as análises do TCC2 estão disponibilizados no
+repositório do projeto. A base bruta Manchester e os artefatos gerados não são
+incorporados ao repositório; as instruções de obtenção e reprodução estão
+descritas no arquivo \texttt{README.md}. O código-fonte está disponível em:
+\url{https://github.com/Josue-SN1/TCC2}.
+
+\section{Considerações Finais}
+
+Há uma carência significativa de dados públicos de longo prazo e diversidade
+populacional. Embora a janela de 14 dias tenha sido executável nesta base, ela
+produziu menos janelas e deve ser interpretada com cautela. Além disso, poucos
+estudos realizam validações em cenários reais, o que limita a aplicação clínica
+dos modelos.
+
+Futuros trabalhos devem focar na coleta de dados multicêntricos, no
+desenvolvimento de modelos explicáveis e na integração com fluxos clínicos
+reais, sempre com validação externa. Essas etapas são necessárias para aumentar
+a confiabilidade e avaliar uma eventual adoção clínica
+\cite[p.~12]{alsamhori2025}.
+
+\textbf{Monitoramento Comportamental e \sigla{IoT}:} Como a poliúria (aumento das idas ao banheiro) é um sintoma característico da descompensação glicêmica, propõe-se a ideação de um sistema auxiliar baseado em aplicativo de diário digital ou dispositivos de rastreamento (\sigla{IoT}/GPS, mediante rigorosas regulamentações de ética e privacidade) para monitorar esse comportamento. Esses registros atuariam como variáveis complementares capazes de enriquecer de forma considerável a capacidade preditiva do algoritmo quando combinados apenas com medições capilares pontuais de glicose (ponta de dedo). Essa estratégia de baixo custo apresenta grande potencial para a saúde pública em países em desenvolvimento, como o Brasil, viabilizando a prevenção precoce de crises para pacientes que não possuem acesso financeiro aos sensores de Monitoramento Contínuo de Glicose (\sigla{CGM}).
+
+% ==========================================
+% BIBLIOGRAFIA AUTOMATIZADA
+% ==========================================
+\newpage
+% \bibliography insere as referências automaticamente baseadas no arquivo referencias.bib
+\bibliography{referencias}
+
+\end{document}

@@ -1,0 +1,63 @@
+# Python and local tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.venv/
+venv/
+env/
+
+# Local LaTeX build products
+*.tex
+/volumefinal/
+/WORKFLOW.md
+!/volumefinal/
+!/volumefinal/volume_final_tcc2.tex
+!/volumefinal/referencias.bib
+/volumefinal/figuras/*.png
+build/
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# Generated PDFs and local archives
+*.pdf
+*.zip
+/figures/
+temporal_windows_audit.json
+temporal_windows_audit.md
+
+# Personal study-material generator
+/generate_pdf_materials.py
+
+# Generated inventories, audits, reports and processed data
+/Manchester_processed/*
+!/Manchester_processed/.gitkeep
+/manchester_inventory.json
+/manchester_inventory.md
+/manchester_alignment_audit.json
+/manchester_alignment_audit.md
+
+# Raw/proprietary dataset files are obtained separately from the official source.
+/ManchesterCSCoordinatedDiabetesStudy-main/
+
+# Local editor and operating-system files
+.github/
+.vscode/
+.DS_Store
+Thumbs.db
+.vscode/*.user
+
+# Local project planning
+/PLANO_TCC.md
